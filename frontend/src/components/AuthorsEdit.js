@@ -74,7 +74,6 @@ class AuthorsEdit extends React.Component {
 
   async handleSubmit(event) {
       //validation goes here
-      await this.saveAuthor();
         const {
             author_id,
             first_name,
@@ -98,7 +97,7 @@ class AuthorsEdit extends React.Component {
       }, 
     }).then( response => {
         if (response.data.message) {
-            window.location = "/"
+            window.location.href = "/"
         }
     } ).catch( ( error ) => {
       console.log( error );

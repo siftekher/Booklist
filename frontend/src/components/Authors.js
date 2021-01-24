@@ -29,7 +29,6 @@ class Authors extends React.Component {
   
   async handleSubmit(event) {
       //validation goes here
-      await this.saveAuthor();
         const {
             first_name,
             last_name
@@ -79,8 +78,8 @@ class Authors extends React.Component {
     };
     
   async saveAuthor(authorDetails) {
-console.log(authorDetails);
-/*
+
+
     axios({
       method: 'post',
       url: 'http://localhost:3300/author',
@@ -95,7 +94,7 @@ console.log(authorDetails);
     } ).catch( ( error ) => {
       console.log( error );
     } )
-*/
+
   }
 
   render() {
