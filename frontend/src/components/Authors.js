@@ -159,10 +159,4 @@ class Authors extends React.Component {
   }
 }
  
-Authors.propTypes = {
-  classes: PropTypes.object.isRequired
-};
-
 export default withRouter(Authors);
-
-

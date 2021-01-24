@@ -189,10 +189,4 @@ class AuthorsEdit extends React.Component {
   }
 }
  
-AuthorsEdit.propTypes = {
-  classes: PropTypes.object.isRequired
-};
-
 export default withRouter(AuthorsEdit);
-
-
