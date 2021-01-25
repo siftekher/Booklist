@@ -12,7 +12,7 @@ import {
 } from "reactstrap";
 import Select from "react-select";
 import { Link } from "react-router-dom";
-
+import Config from '../config/config';
 const axios = require('axios').default;
 
 class BookEdit extends React.Component {
@@ -71,27 +71,43 @@ class BookEdit extends React.Component {
         }
         this.setState({ [stateName]: event.target.value });
     };
+    
+  validateForm() {
+    var valid = true;
+    if (this.state.name === "") {
+      this.setState({ nameState: "has-danger" });
+      valid = false;
+    }
+    if (this.state.isbn === "") {
+      this.setState({ isbnState: "has-danger" });
+      valid = false;
+    }
+
+    return valid;
+  }
+    
   async handleSubmit(event) {
-      //validation goes here
-      const {
+     if(this.validateForm()) {
+        const {
             book_id,
             name,
             isbn,
             author,
         } = this.state;
-      await this.updateBook({
-          book_id:book_id,
-          name: name,
-          isbn: isbn,
-          author: author,
-      });
+        await this.updateBook({
+           book_id:book_id,
+           name: name,
+           isbn: isbn,
+           author: author,
+        });
+     }
   }
   
   async updateBook(bookDetails) {
 
     axios({
       method: 'put',
-      url: 'http://localhost:3300/book/'+bookDetails.book_id,
+      url: Config.API_URL + '/book/'+bookDetails.book_id,
       data: bookDetails,
       headers: {
       'Content-Type': 'application/json'
@@ -108,8 +124,7 @@ class BookEdit extends React.Component {
 
   componentDidMount() {
     if (this.props.match.params.id) {
-        console.log(this.props.match.params.id);
-        fetch("http://localhost:3300/books/"+this.props.match.params.id)
+        fetch(Config.API_URL + "/books/"+this.props.match.params.id)
             .then(res => res.json())
             .then(data => {
                 this.setState({
@@ -127,10 +142,9 @@ class BookEdit extends React.Component {
       
       
       
-        fetch("http://localhost:3300/authors")
+        fetch(Config.API_URL + "/authors")
             .then(res => res.json())
             .then(data => {
-                console.log(data.author);
                 this.setState({
                     isLoading: true,
                     author_list: data.author
@@ -174,6 +188,9 @@ class BookEdit extends React.Component {
                           value={this.state.name || ""}
                           onChange={e => this.change(e, "name", "length", 3)}
                         />
+                         {this.state.nameState === "has-danger" ? (
+                           <label className="error">This field is required.</label>
+                        ) : null}
                       </Col>
                     </FormGroup>
                     <FormGroup row>
@@ -189,6 +206,9 @@ class BookEdit extends React.Component {
                           value={this.state.isbn || ""}
                           onChange={e => this.change(e, "isbn", "length", 3)}
                         />
+                         {this.state.isbnState === "has-danger" ? (
+                           <label className="error">This field is required.</label>
+                        ) : null}
                       </Col>
                     </FormGroup>
                     <FormGroup row>

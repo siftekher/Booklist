@@ -12,7 +12,7 @@ import {
 } from "reactstrap";
 
 import { Link } from "react-router-dom";
-
+import Config from '../config/config';
 const axios = require('axios').default;
 
 class Authors extends React.Component {
@@ -27,15 +27,16 @@ class Authors extends React.Component {
   }
   
   async handleSubmit(event) {
-      //validation goes here
+    if(this.validateForm()) {
         const {
             first_name,
             last_name
         } = this.state;
-      await this.saveAuthor({
-          first_name: first_name,
-          last_name: last_name
-      });
+        await this.saveAuthor({
+            first_name: first_name,
+            last_name: last_name
+        });
+    }
   }
   
     verifyLength = (value, length) => {
@@ -76,25 +77,36 @@ class Authors extends React.Component {
         this.setState({ [stateName]: event.target.value });
     };
     
-  async saveAuthor(authorDetails) {
-
-
-    axios({
-      method: 'post',
-      url: 'http://localhost:3300/author',
-      data: authorDetails,
-      headers: {
-      'Content-Type': 'application/json'
-      }, 
-    }).then( response => {
-        if (response.data.message) {
-            window.location.href = "/"
+    validateForm() {
+        var valid = true;
+        if (this.state.first_name === "") {
+          this.setState({ first_nameState: "has-danger" });
+          valid = false;
         }
-    } ).catch( ( error ) => {
-      console.log( error );
-    } )
+        if (this.state.last_name === "") {
+          this.setState({ last_nameState: "has-danger" });
+          valid = false;
+        }
 
-  }
+        return valid;
+    }
+  
+    async saveAuthor(authorDetails) {
+        axios({
+          method: 'post',
+          url: Config.API_URL + '/author',
+          data: authorDetails,
+          headers: {
+          'Content-Type': 'application/json'
+          }, 
+        }).then( response => {
+            if (response.data.message) {
+                window.location.href = "/"
+            }
+        } ).catch( ( error ) => {
+          console.log( error );
+        } )
+   }
 
   render() {
 
@@ -123,6 +135,9 @@ class Authors extends React.Component {
                           placeholder="First Name"
                           onChange={e => this.change(e, "first_name", "length", 3)}
                         />
+                        {this.state.first_nameState === "has-danger" ? (
+                           <label className="error">This field is required.</label>
+                        ) : null}
                       </Col>
                     </FormGroup>
                     <FormGroup row>
@@ -137,6 +152,9 @@ class Authors extends React.Component {
                           placeholder="Last Name"
                           onChange={e => this.change(e, "last_name", "length", 3)}
                         />
+                        {this.state.last_nameState === "has-danger" ? (
+                           <label className="error">This field is required.</label>
+                        ) : null}
                       </Col>
                     </FormGroup>
                     <FormGroup check row>

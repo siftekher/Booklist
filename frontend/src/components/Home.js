@@ -9,6 +9,7 @@ import {
   CardBody
 } from "reactstrap";
 import { Link } from "react-router-dom";
+import Config from '../config/config';
 
 const HomeStyles = {
   textalignright: {
@@ -27,7 +28,7 @@ class Home extends React.Component {
   }
 
   componentDidMount() {
-        fetch("http://localhost:3300/books")
+        fetch(Config.API_URL + "/books")
             .then(res => res.json())
             .then(data => {
                 let dataFromApi = data.book.map(book => {

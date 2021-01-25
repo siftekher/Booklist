@@ -12,7 +12,7 @@ import {
 } from "reactstrap";
 
 import { Link } from "react-router-dom";
-
+import Config from '../config/config';
 const axios = require('axios').default;
 
 class AuthorsEdit extends React.Component {
@@ -70,26 +70,41 @@ class AuthorsEdit extends React.Component {
         }
         this.setState({ [stateName]: event.target.value });
     };
+  
+    validateForm() {
+        var valid = true;
+        if (this.state.first_name === "") {
+          this.setState({ first_nameState: "has-danger" });
+          valid = false;
+        }
+        if (this.state.last_name === "") {
+          this.setState({ last_nameState: "has-danger" });
+          valid = false;
+        }
+
+        return valid;
+    }
 
   async handleSubmit(event) {
-      //validation goes here
+    if(this.validateForm()) {
         const {
             author_id,
             first_name,
             last_name
         } = this.state;
-      await this.updateAuthor({
-          author_id: author_id,
-          first_name: first_name,
-          last_name: last_name
-      });
+        await this.updateAuthor({
+           author_id: author_id,
+           first_name: first_name,
+           last_name: last_name
+        });
+    }
   }
   
   async updateAuthor(authorDetails) {
 
     axios({
       method: 'put',
-      url: 'http://localhost:3300/author/'+authorDetails.author_id,
+      url: Config.API_URL + '/author/'+authorDetails.author_id,
       data: authorDetails,
       headers: {
       'Content-Type': 'application/json'
@@ -105,8 +120,7 @@ class AuthorsEdit extends React.Component {
 
   componentDidMount() {
     if (this.props.match.params.id) {
-        console.log(this.props.match.params.id);
-        fetch("http://localhost:3300/authors/"+this.props.match.params.id)
+        fetch(Config.API_URL + "/authors/"+this.props.match.params.id)
             .then(res => res.json())
             .then(data => {
                 console.log(data.author);
@@ -152,6 +166,9 @@ class AuthorsEdit extends React.Component {
                           value={this.state.first_name || ""}
                           onChange={e => this.change(e, "first_name", "length", 3)}
                         />
+                        {this.state.first_nameState === "has-danger" ? (
+                           <label className="error">This field is required.</label>
+                        ) : null}
                       </Col>
                     </FormGroup>
                     <FormGroup row>
@@ -167,6 +184,9 @@ class AuthorsEdit extends React.Component {
                           value={this.state.last_name || ""}
                           onChange={e => this.change(e, "last_name", "length", 3)}
                         />
+                        {this.state.last_nameState === "has-danger" ? (
+                           <label className="error">This field is required.</label>
+                        ) : null}
                       </Col>
                     </FormGroup>
                     <FormGroup check row>

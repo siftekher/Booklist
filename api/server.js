@@ -22,120 +22,146 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 //Returns a list of books in the database in JSON format
 app.get('/books', async (req, res) => {
+    try {
+        Book.find()
+         .populate('author')
+         .exec(function(err, book){
+              if (err)
+                res.send(err);
 
-     Book.find()
-     .populate('author')
-     .exec(function(err, book){
-          if (err)
-            res.send(err);
-
-        res.json({
-            book: book
-        });
-     })
-    
+            res.json({
+                book: book
+            });
+        })
+    } catch(error){
+        res.json({ error: error });
+    }
 })
 
 
 app.get('/books/:id', async (req, res) => {
-    Book.findById(req.params.id, function(err, book) {
-        if (err)
-           res.send(err);
-        res.json({
-            book: book
+    try {
+        Book.findById(req.params.id, function(err, book) {
+            if (err)
+               res.send(err);
+            res.json({
+                book: book
+            });
         });
-        
-        
-    });
+    } catch(error){
+        res.json({ error: error });
+    }
 
 })
 
 //Returns a list of authors in the database in JSON format
 app.get('/authors', async (req, res) => {
-    Author.find(function(err, author) {
-        if (err)
-            res.send(err);
-        res.json({
-            author: author
+    try {
+        Author.find(function(err, author) {
+            if (err)
+                res.send(err);
+            res.json({
+                author: author
+            });
         });
-    });
+    } catch(error){
+        res.json({ error: error });
+    }
 })
 
 //Returns a detail view of the specified author id
 app.get('/authors/:id', async (req, res) => {
-    Author.findById(req.params.id, function(err, author) {
-        if (err)
-           res.send(err);
-        res.json({
-            author: author
+    try {
+        Author.findById(req.params.id, function(err, author) {
+            if (err)
+               res.send(err);
+            res.json({
+                author: author
+            });
         });
-    });
+    } catch(error){
+        res.json({ error: error });
+    }
 })
 
 app.post('/book', async (req, res) => {
-    var book = new Book();
-    book.name = req.body.name;
-    book.isbn = req.body.isbn;
-    book.author = req.body.author;
-
-    book.save(function(err) {
-        if (err)
-           res.send(err);
-
-        res.json({ message: 'book created!' });
-    });
-})
-
-app.post('/author', async (req, res) => {
-    var author = new Author();
-    author.first_name = req.body.first_name;
-    author.last_name  = req.body.last_name;
-
-    author.save(function(err) {
-        if (err)
-           res.send(err);
-
-        res.json({ message: 'author created!' });
-    });
-})
-
-
-//update Book 
-app.put('/book/:id', async (req, res) => {
-    Book.findById(req.params.id, function(err, book) {
-        if (err)
-            res.send(err);
-
+    try {
+        var book = new Book();
         book.name = req.body.name;
         book.isbn = req.body.isbn;
         book.author = req.body.author;
+
         book.save(function(err) {
             if (err)
-                res.send(err);
+               res.send(err);
 
-            res.json({ message: 'Book updated!' });
+            res.json({ message: 'book created!' });
         });
-
-    });
+    } catch(error){
+        res.json({ error: error });
+    }
 })
 
-//update Author
-app.put('/author/:id', async (req, res) => {
-    Author.findById(req.params.id, function(err, author) {
-        if (err)
-            res.send(err);
-
+app.post('/author', async (req, res) => {
+    try {
+        var author = new Author();
         author.first_name = req.body.first_name;
         author.last_name  = req.body.last_name;
 
         author.save(function(err) {
             if (err)
+               res.send(err);
+
+            res.json({ message: 'author created!' });
+        });
+    } catch(error){
+        res.json({ error: error });
+    }
+})
+
+
+//update Book 
+app.put('/book/:id', async (req, res) => {
+    try {
+        Book.findById(req.params.id, function(err, book) {
+            if (err)
                 res.send(err);
 
-            res.json({ message: 'Author updated!' });
-        });
+            book.name = req.body.name;
+            book.isbn = req.body.isbn;
+            book.author = req.body.author;
+            book.save(function(err) {
+                if (err)
+                    res.send(err);
 
-    });
+                res.json({ message: 'Book updated!' });
+            });
+        });
+    } catch(error){
+        res.json({ error: error });
+    }
+})
+
+//update Author
+app.put('/author/:id', async (req, res) => {
+    try {
+        Author.findById(req.params.id, function(err, author) {
+            if (err)
+                res.send(err);
+
+            author.first_name = req.body.first_name;
+            author.last_name  = req.body.last_name;
+
+            author.save(function(err) {
+                if (err)
+                    res.send(err);
+
+                res.json({ message: 'Author updated!' });
+            });
+        });
+    } catch(error){
+        res.json({ error: error });
+    }
 
 })
 

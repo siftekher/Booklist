@@ -12,7 +12,7 @@ import {
 } from "reactstrap";
 import Select from "react-select";
 import { Link } from "react-router-dom";
-
+import Config from '../config/config';
 const axios = require('axios').default;
 
 class Books extends React.Component {
@@ -73,26 +73,43 @@ class Books extends React.Component {
         }
         this.setState({ [stateName]: event.target.value });
     };
+    
+  validateForm() {
+    var valid = true;
+    if (this.state.name === "") {
+      this.setState({ nameState: "has-danger" });
+      valid = false;
+    }
+    if (this.state.isbn === "") {
+      this.setState({ isbnState: "has-danger" });
+      valid = false;
+    }
 
+    return valid;
+  }
+  
   async handleSubmit(event) {
       //validation goes here
+    if(this.validateForm()) {
         const {
             name,
             isbn,
             author,
         } = this.state;
-      await this.saveBook({
+       await this.saveBook({
           name: name,
           isbn: isbn,
           author: author,
-      });
+       });
+    }
   }
+  
   
   async saveBook(bookDetails) {
 
     axios({
       method: 'post',
-      url: 'http://localhost:3300/book',
+      url: Config.API_URL + '/book',
       data: bookDetails,
       headers: {
       'Content-Type': 'application/json'
@@ -109,15 +126,13 @@ class Books extends React.Component {
   }
 
   componentDidMount() {
-        fetch("http://localhost:3300/authors")
+        fetch(Config.API_URL + "/authors")
             .then(res => res.json())
             .then(data => {
-                console.log(data.author);
                 this.setState({
                     isLoading: true,
                     author_list: data.author
                 });
-
             })
             .catch(error => {
                 console.log(error);
@@ -154,6 +169,9 @@ class Books extends React.Component {
                           placeholder="Name"
                           onChange={e => this.change(e, "name", "length", 3)}
                         />
+                        {this.state.nameState === "has-danger" ? (
+                           <label className="error">This field is required.</label>
+                        ) : null}
                       </Col>
                     </FormGroup>
                     <FormGroup row>
@@ -168,6 +186,9 @@ class Books extends React.Component {
                           placeholder="ISBN"
                           onChange={e => this.change(e, "isbn", "length", 3)}
                         />
+                        {this.state.isbnState === "has-danger" ? (
+                           <label className="error">This field is required.</label>
+                        ) : null}
                       </Col>
                     </FormGroup>
                     <FormGroup row>
